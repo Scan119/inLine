@@ -1,42 +1,14 @@
-package codesuda.inLine.api;
+package codesuda.inLine.controller.api;
 
 import codesuda.inLine.constant.PlaceType;
+import codesuda.inLine.dto.APIDataResponse;
+import codesuda.inLine.dto.PlaceRequest;
+import codesuda.inLine.dto.PlaceResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/api")
-@RestController
-public class APIPlaceController {
-    @GetMapping("/places")
-    public List<String> getplaces() {
-        return List.of("place1, place2");
-    }
-
-    @PostMapping("/places")
-    public Boolean createPlace() {
-        return true;
-    }
-
-    @GetMapping("/places/{placeId}")
-    public String getPlace(@PathVariable Long placeId) {
-        return "event " + placeId;
-    }
-
-    @PutMapping("/places/{placeId}")
-    public Boolean modifyPlace( @PathVariable Long placeId) {
-        return true;
-    }
-
-    @DeleteMapping("/places/{placeId}")
-    public Boolean removePlace( @PathVariable Long placeId) {
-        return true;
-    }
-
-}
-
-/*
 @RequestMapping("/api")
 @RestController
 public class APIPlaceController {
@@ -89,4 +61,3 @@ public class APIPlaceController {
     }
 
 }
-*/

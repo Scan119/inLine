@@ -20,13 +20,23 @@ import java.util.Map;
 public class AdminController {
 
     @GetMapping("/places")
-    public String adminPlaces() {
-        return "admin/places";
+    public ModelAndView adminPlaces(      //@RequestParam 을 생략하면 @RequestParam(required=false) 와 같다
+            PlaceType placeType,
+            String placeName,
+            String address
+
+    ) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("placeType", placeType);
+        map.put("placeName", placeName);
+        map.put("address", address);
+
+        return new ModelAndView("admin/places", map);
     }
 
     @GetMapping("/places/{placeId}")
     public String adminPlaceDetail(@PathVariable Long placeId) {
-        return "/admin/place-detail";
+        return "admin/place-detail";
     }
 
     @GetMapping("/events")

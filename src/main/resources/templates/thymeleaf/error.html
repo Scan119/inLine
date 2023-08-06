@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<!-- <meta http-equiv="refresh" content="0; url=http://localhost:8080/member/memberRegist"></meta> -->
-<title>inLine</title>
+	<meta charset="UTF-8">
+	<title>Title</title>
 </head>
 <body>
-		<h1> error page</h1>
-		<br>
-		<br>
+<p>
+	This is <span th:text="${statusCode} ?: _">???</span> error page.
+</p>
+<ul>
+	<li>errorCode: <span th:text="${errorCode} ?: _">?</span></li>
+	<li>message: <span th:text="${message} ?: _">?</span></li>
+</ul>
 </body>
 </html>

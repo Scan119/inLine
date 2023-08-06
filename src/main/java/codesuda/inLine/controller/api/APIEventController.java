@@ -1,46 +1,22 @@
-package codesuda.inLine.api;
+package codesuda.inLine.controller.api;
 
+import codesuda.inLine.constant.EventStatus;
+import codesuda.inLine.dto.APIDataResponse;
+import codesuda.inLine.dto.EventRequest;
+import codesuda.inLine.dto.EventResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-
-@RequestMapping("/api")
-@RestController
-public class APIEventController {
-    @GetMapping("/events")
-    public List<String> getEvents() {
-        return List.of("event1, ebent2");
-    }
-
-    @PostMapping("/events")
-    public Boolean createEvent() {
-        return true;
-    }
-
-    @GetMapping("/events/{eventId}")
-    public String getEvent(@PathVariable Long eventId) {
-        return "event " + eventId;
-    }
-
-    @PutMapping("/events/{eventId}")
-    public Boolean modifyEvent( @PathVariable Long eventId) {
-        return true;
-    }
-
-    @DeleteMapping("/events/{eventId}")
-    public Boolean removeEvent( @PathVariable Long eventId) {
-        return true;
-    }
-
-}
-/*
 @RequestMapping("/api")
 @RestController
 public class APIEventController {
 
     @GetMapping("/events")
     public APIDataResponse<List<EventResponse>> getEvents() {
+        //throw new RuntimeException("에러 메세지 test");
         return APIDataResponse.of(List.of(EventResponse.of(
                 1L,
                 "오후 운동",
@@ -56,6 +32,7 @@ public class APIEventController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events")
     public APIDataResponse<Void> createEvent(@RequestBody EventRequest eventRequest) {
+        //throw new RuntimeException("에러 메세지 test");
         return APIDataResponse.empty();
     }
 
@@ -91,4 +68,3 @@ public class APIEventController {
     }
 
 }
-*/
