@@ -33,16 +33,14 @@ class APIEventControllerTest {
     private final MockMvc mvc;
     private final ObjectMapper mapper;
 
-    @MockBean
-    private EventService eventService;
+    @MockBean private EventService eventService;
 
     public APIEventControllerTest(
             @Autowired MockMvc mvc,
-            @Autowired ObjectMapper mapper)
-    {
+            @Autowired ObjectMapper mapper
+    ) {
         this.mvc = mvc;
         this.mapper = mapper;
-
     }
 
     @DisplayName("[API][GET] 이벤트 리스트 조회 + 검색 파라미터")
@@ -106,6 +104,7 @@ class APIEventControllerTest {
         // Given
         EventResponse eventResponse = EventResponse.of(
                 1L,
+                1L,
                 "오후 운동",
                 EventStatus.OPENED,
                 LocalDateTime.of(2021, 1, 1, 13, 0, 0),
@@ -136,6 +135,7 @@ class APIEventControllerTest {
     void givenWrongEvent_whenCreatingAnEvent_thenReturnsFailedStandardResponse() throws Exception {
         // Given
         EventResponse eventResponse = EventResponse.of(
+                1L,
                 0L,
                 "  ",
                 null,
@@ -223,7 +223,6 @@ class APIEventControllerTest {
                 .andExpect(jsonPath("$.message").value(containsString(ErrorCode.VALIDATION_ERROR.getMessage())));
         then(eventService).shouldHaveNoInteractions();
     }
-    //containsString : 일부 string 이 포함되어 있으면 pass 로 처리
 
     @DisplayName("[API][PUT] 이벤트 변경")
     @Test
@@ -231,6 +230,7 @@ class APIEventControllerTest {
         // Given
         long eventId = 1L;
         EventResponse eventResponse = EventResponse.of(
+                eventId,
                 1L,
                 "오후 운동",
                 EventStatus.OPENED,
@@ -263,6 +263,7 @@ class APIEventControllerTest {
         // Given
         long eventId = 0L;
         EventResponse eventResponse = EventResponse.of(
+                eventId,
                 0L,
                 "  ",
                 null,
@@ -324,6 +325,7 @@ class APIEventControllerTest {
 
     private EventDTO createEventDTO() {
         return EventDTO.of(
+                1L,
                 1L,
                 "오후 운동",
                 EventStatus.OPENED,

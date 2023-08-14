@@ -25,10 +25,8 @@ import static org.mockito.BDDMockito.then;
 @ExtendWith(MockitoExtension.class)
 class EventServiceTest {
 
-    @InjectMocks
-    private EventService sut;
-    @Mock
-    private EventRepository eventRepository;
+    @InjectMocks private EventService sut;
+    @Mock private EventRepository eventRepository;
 
     @DisplayName("검색 조건 없이 이벤트를 검색하면, 전체 결과를 출력하여 보여준다.")
     @Test
@@ -57,7 +55,6 @@ class EventServiceTest {
         EventStatus eventStatus = EventStatus.OPENED;
         LocalDateTime eventStartDatetime = LocalDateTime.of(2021, 1, 1, 0, 0, 0);
         LocalDateTime eventEndDatetime = LocalDateTime.of(2021, 1, 2, 0, 0, 0);
-        //LocalDateTime.parse("2021-01-01T00:00:00");
 
         given(eventRepository.findEvents(placeId, eventName, eventStatus, eventStartDatetime, eventEndDatetime))
                 .willReturn(List.of(
@@ -323,6 +320,7 @@ class EventServiceTest {
             LocalDateTime eventEndDateTime
     ) {
         return EventDTO.of(
+                1L,
                 placeId,
                 eventName,
                 eventStatus,
