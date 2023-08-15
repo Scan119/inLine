@@ -4,6 +4,7 @@ import codesuda.inLine.constant.ErrorCode;
 import codesuda.inLine.dto.APIErrorResponse;
 import codesuda.inLine.exception.GeneralException;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@RestControllerAdvice(annotations = RestController.class)
+@RestControllerAdvice(annotations = {RestController.class, RepositoryRestController.class})
 public class APIExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler
@@ -38,21 +39,21 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
-        ErrorCode errorCode = statusCode.is4xxClientError() ?
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        ErrorCode errorCode = status.is4xxClientError() ?
                 ErrorCode.SPRING_BAD_REQUEST :
                 ErrorCode.SPRING_INTERNAL_ERROR;
 
-        return handleExceptionInternal(ex, errorCode, headers, statusCode, request);
+        return handleExceptionInternal(ex, errorCode, headers, status, request);
     }
 
 
-    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorCode errorCode, HttpHeaders headers, HttpStatusCode statusCode, WebRequest request) {
+    private ResponseEntity<Object> handleExceptionInternal(Exception e, ErrorCode errorCode, HttpHeaders headers, HttpStatus status, WebRequest request) {
         return super.handleExceptionInternal(
                 e,
                 APIErrorResponse.of(false, errorCode.getCode(), errorCode.getMessage(e)),
                 headers,
-                statusCode,
+                status,
                 request
         );
     }

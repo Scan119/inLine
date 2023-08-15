@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Validated
 @RequiredArgsConstructor
-@RequestMapping("/api")
-@RestController
+//@Validated
+//@RequestMapping("/api")
+//@RestController
 public class APIEventController {
 
     private final EventService eventService;
@@ -32,7 +32,6 @@ public class APIEventController {
             EventStatus eventStatus,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventStartDatetime,
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime eventEndDatetime
-            //LocalDateTime eventEndDatetime // 프로퍼티에 spring.mvc.format.date-time = iso-offset 지정했을 경우
     ) {
         List<EventResponse> eventResponses = eventService.getEvents(
                 placeId,
@@ -48,6 +47,7 @@ public class APIEventController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events")
     public APIDataResponse<String> createEvent(@Valid @RequestBody EventRequest eventRequest) {
+
         boolean result = eventService.createEvent(eventRequest.toDTO());
 
         return APIDataResponse.of(Boolean.toString(result));

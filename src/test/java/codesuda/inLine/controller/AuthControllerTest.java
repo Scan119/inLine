@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@DisplayName("View 컨트롤러 - 인증")
 @WebMvcTest(AuthController.class)
 class AuthControllerTest {
 
@@ -30,7 +31,7 @@ class AuthControllerTest {
         mvc.perform(get("/login"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-                .andExpect(content().string(containsString("Welcome to login page")))
+                .andExpect(content().string(containsString("This is login page.")))
                 .andExpect(view().name("auth/login"));
     }
 
@@ -43,7 +44,7 @@ class AuthControllerTest {
         mvc.perform(get("/sign-up"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-                .andExpect(content().string(containsString("Welcome to sign-up page")))
+                .andExpect(content().string(containsString("This is sign-up page.")))
                 .andExpect(view().name("auth/sign-up"));
     }
 
