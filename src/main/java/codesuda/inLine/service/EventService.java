@@ -2,12 +2,15 @@ package codesuda.inLine.service;
 
 import codesuda.inLine.constant.ErrorCode;
 import codesuda.inLine.constant.EventStatus;
-import codesuda.inLine.dto.EventDTO;
+import codesuda.inLine.domain.Place;
+import codesuda.inLine.dto.EventDto;
 import codesuda.inLine.exception.GeneralException;
 import codesuda.inLine.repository.EventRepository;
+import codesuda.inLine.repository.PlaceRepository;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,18 +22,21 @@ import java.util.stream.StreamSupport;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final PlaceRepository placeRepository;
 
-    public List<EventDTO> getEvents(Predicate predicate) {
+    @Transactional(readOnly = true)
+    public List<EventDto> getEvents(Predicate predicate) {
         try {
             return StreamSupport.stream(eventRepository.findAll(predicate).spliterator(), false)
-                    .map(EventDTO::of)
+                    .map(EventDto::of)
                     .toList();
         } catch (Exception e) {
             throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
         }
     }
 
-    public List<EventDTO> getEvents(
+    @Transactional(readOnly = true)
+    public List<EventDto> getEvents(
             Long placeId,
             String eventName,
             EventStatus eventStatus,
@@ -44,28 +50,33 @@ public class EventService {
         }
     }
 
-    public Optional<EventDTO> getEvent(Long eventId) {
+    @Transactional(readOnly = true)
+    public Optional<EventDto> getEvent(Long eventId) {
         try {
-            return eventRepository.findById(eventId).map(EventDTO::of);
+            return eventRepository.findById(eventId).map(EventDto::of);
         } catch (Exception e) {
             throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
         }
     }
 
-    public boolean createEvent(EventDTO eventDTO) {
+    @Transactional
+    public boolean createEvent(EventDto eventDTO) {
         try {
             if (eventDTO == null) {
                 return false;
             }
 
-            eventRepository.save(eventDTO.toEntity());
+            Place place = placeRepository.findById(eventDTO.placeDto().id())
+                    .orElseThrow(() -> new GeneralException(ErrorCode.NOT_FOUND));
+            eventRepository.save(eventDTO.toEntity(place));
             return true;
         } catch (Exception e) {
             throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
         }
     }
 
-    public boolean modifyEvent(Long eventId, EventDTO dto) {
+    @Transactional
+    public boolean modifyEvent(Long eventId, EventDto dto) {
         try {
             if (eventId == null || dto == null) {
                 return false;
@@ -80,6 +91,7 @@ public class EventService {
         }
     }
 
+    @Transactional
     public boolean removeEvent(Long eventId) {
         try {
             if (eventId == null) {

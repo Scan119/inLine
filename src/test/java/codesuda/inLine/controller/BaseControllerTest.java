@@ -30,7 +30,7 @@ class BaseControllerTest {
         mvc.perform(get("/"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
-                .andExpect(content().string(containsString("This is default page.")))
+                .andExpect(content().string(containsString("Welcome to codesuda bang")))
                 .andExpect(view().name("index"))
                 .andDo(print());
     }

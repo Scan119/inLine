@@ -1,6 +1,6 @@
 package codesuda.inLine.controller;
 
-import codesuda.inLine.dto.EventDTO;
+import codesuda.inLine.dto.EventDto;
 import codesuda.inLine.service.EventService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,8 +24,7 @@ class EventControllerTest {
 
     private final MockMvc mvc;
 
-    @MockBean
-    private EventService eventService;
+    @MockBean private EventService eventService;
 
     public EventControllerTest(@Autowired MockMvc mvc) {
         this.mvc = mvc;
@@ -53,7 +52,7 @@ class EventControllerTest {
         // Given
         long eventId = 1L;
         given(eventService.getEvent(eventId)).willReturn(Optional.of(
-                EventDTO.of(eventId, null, null, null, null, null, null, null, null, null, null)
+                EventDto.of(eventId, null, null, null, null, null, null, null, null, null, null)
         ));
 
         // When & Then
@@ -63,7 +62,6 @@ class EventControllerTest {
                 .andExpect(view().name("event/detail"))
                 .andExpect(model().hasNoErrors())
                 .andExpect(model().attributeExists("event"));
-
         then(eventService).should().getEvent(eventId);
     }
 
@@ -76,10 +74,9 @@ class EventControllerTest {
 
         // When & Then
         mvc.perform(get("/events/" + eventId))
-                .andExpect(status().isBadRequest()) // TODO: 나중에 404로 바꿔보자
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(view().name("error"));
-
         then(eventService).should().getEvent(eventId);
     }
 
