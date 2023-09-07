@@ -4,11 +4,14 @@ import codesuda.inLine.constant.ErrorCode;
 import codesuda.inLine.constant.EventStatus;
 import codesuda.inLine.domain.Place;
 import codesuda.inLine.dto.EventDto;
+import codesuda.inLine.dto.EventViewResponse;
 import codesuda.inLine.exception.GeneralException;
 import codesuda.inLine.repository.EventRepository;
 import codesuda.inLine.repository.PlaceRepository;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +27,6 @@ public class EventService {
     private final EventRepository eventRepository;
     private final PlaceRepository placeRepository;
 
-    @Transactional(readOnly = true)
     public List<EventDto> getEvents(Predicate predicate) {
         try {
             return StreamSupport.stream(eventRepository.findAll(predicate).spliterator(), false)
@@ -35,22 +37,28 @@ public class EventService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public List<EventDto> getEvents(
-            Long placeId,
+    public Page<EventViewResponse> getEventViewResponse(
+            String placeName,
             String eventName,
             EventStatus eventStatus,
             LocalDateTime eventStartDatetime,
-            LocalDateTime eventEndDatetime
+            LocalDateTime eventEndDatetime,
+            Pageable pageable
     ) {
         try {
-            return null;
+            return eventRepository.findEventViewPageBySearchParams(
+                    placeName,
+                    eventName,
+                    eventStatus,
+                    eventStartDatetime,
+                    eventEndDatetime,
+                    pageable
+            );
         } catch (Exception e) {
             throw new GeneralException(ErrorCode.DATA_ACCESS_ERROR, e);
         }
     }
 
-    @Transactional(readOnly = true)
     public Optional<EventDto> getEvent(Long eventId) {
         try {
             return eventRepository.findById(eventId).map(EventDto::of);
@@ -59,7 +67,6 @@ public class EventService {
         }
     }
 
-    @Transactional
     public boolean createEvent(EventDto eventDTO) {
         try {
             if (eventDTO == null) {
@@ -75,7 +82,6 @@ public class EventService {
         }
     }
 
-    @Transactional
     public boolean modifyEvent(Long eventId, EventDto dto) {
         try {
             if (eventId == null || dto == null) {
@@ -91,7 +97,6 @@ public class EventService {
         }
     }
 
-    @Transactional
     public boolean removeEvent(Long eventId) {
         try {
             if (eventId == null) {

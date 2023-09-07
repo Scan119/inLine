@@ -2,6 +2,7 @@ package codesuda.inLine.repository;
 
 import codesuda.inLine.domain.Event;
 import codesuda.inLine.domain.QEvent;
+import codesuda.inLine.repository.querydsl.EventRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.querydsl.binding.QuerydslBinderCustomizer;
@@ -11,6 +12,7 @@ import com.querydsl.core.types.dsl.StringExpression;
 
 public interface EventRepository extends
         JpaRepository<Event, Long>,
+        EventRepositoryCustom,
         QuerydslPredicateExecutor<Event>,
         QuerydslBinderCustomizer<QEvent> {
 
