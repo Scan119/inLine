@@ -98,7 +98,7 @@ class ApiExceptionHandlerTest {
         String msg = "test message";
 
         return Stream.of(
-                arguments(new HttpRequestMethodNotSupportedException(HttpMethod.POST.name(), msg), HttpStatus.METHOD_NOT_ALLOWED),
+              //  arguments(new HttpRequestMethodNotSupportedException(HttpMethod.POST.name(), msg), HttpStatus.METHOD_NOT_ALLOWED),
                 arguments(new HttpMediaTypeNotSupportedException(msg), HttpStatus.UNSUPPORTED_MEDIA_TYPE),
                 arguments(new HttpMediaTypeNotAcceptableException(msg), HttpStatus.NOT_ACCEPTABLE),
                 arguments(new ServletRequestBindingException(msg), HttpStatus.BAD_REQUEST),

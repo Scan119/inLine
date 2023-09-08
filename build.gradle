@@ -1,7 +1,8 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.1.2'
-	id 'io.spring.dependency-management' version '1.1.2'
+	id 'org.springframework.boot' version '3.1.3'
+	id 'io.spring.dependency-management' version '1.1.3'
+	id 'nu.studer.jooq' version '8.2.1'
 }
 
 group = 'codesuda'
@@ -23,6 +24,7 @@ repositories {
 
 project.ext {
 	querydslVersion = dependencyManagement.importedProperties['querydsl.version']
+	jooqVersion = dependencyManagement.importedProperties['jooq.version']
 	mysqlVersion = dependencyManagement.importedProperties['mysql.version']
 }
 
@@ -49,23 +51,29 @@ dependencies {
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+// Jooq
+	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+	implementation("org.jooq:jooq-codegen:3.18.0")
+	jooqGenerator('jakarta.xml.bind:jakarta.xml.bind-api:4.0.0')
+	jooqGenerator "mysql:mysql-connector-java:${project.mysqlVersion}"
+
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
 
-// querydsl 적용
+// querydsl 설정
 def generated='src/main/generated'
+
+// querydsl QClass 파일 생성 위치를 지정
+tasks.withType(JavaCompile).configureEach {
+	options.getGeneratedSourceOutputDirectory().set(file(generated))
+}
 
 // java source set 에 querydsl QClass 위치 추가
 sourceSets {
 	main.java.srcDirs += [ generated ]
-}
-
-// querydsl QClass 파일 위치를 잡아주는 설정
-tasks.withType(JavaCompile).configureEach {
-	options.getGeneratedSourceOutputDirectory().set(file(generated))
 }
 
 // gradle clean 시에 QClass 디렉토리 삭제
@@ -73,3 +81,74 @@ clean {
 	delete file(generated)
 }
 
+// Jooq 설정부
+def generatedJooq = 'src/main/generated-jooq'
+
+jooq {
+	version = project.jooqVersion
+
+	configurations {
+		main {  // name of the jOOQ configuration
+			generationTool {
+                logging = org.jooq.meta.jaxb.Logging.WARN
+				jdbc {
+					driver = 'com.mysql.cj.jdbc.Driver'
+					url = 'jdbc:mysql://localhost:3306/inline'
+					user = 'root'
+					password = 'mysql16384'
+				}
+				generator {
+					name = 'org.jooq.codegen.JavaGenerator'
+					database {
+						name = 'org.jooq.meta.mysql.MySQLDatabase'
+						inputSchema = 'inline'
+						includes = '.*'
+						excludes = ''
+						forcedTypes {
+							forcedType {
+								userType = 'codesuda.inLine.constant.EventStatus'
+								enumConverter = true
+								includeExpression = '.*\\.event_status'
+								includeTypes = '.*'
+							}
+							forcedType {
+								userType = 'codesuda.inLine.constant.PlaceType'
+								enumConverter = true
+								includeExpression = '.*\\.place_type'
+								includeTypes = '.*'
+							}
+						}
+					}
+					generate {
+						deprecated = false
+						records = true
+						immutablePojos = true
+						fluentSetters = true
+						javaTimeTypes = true
+					}
+					target {
+						packageName = 'codesuda.inLine'
+						directory = generatedJooq
+					}
+					strategy.name = "org.jooq.codegen.DefaultGeneratorStrategy"
+				}
+			}
+		}
+	}
+}
+
+// incremental build (증분 빌드) - Jooq 오브젝트 생성 퍼포먼스 향상
+tasks.named('generateJooq').configure {
+	allInputsDeclared = true
+	outputs.cacheIf { true }
+}
+// java source set 에 Jooq 디렉토리 추가, 없어도 jooq source 를 잘 찾으면 설정을 안해 주어도 된다.
+//sourceSets {
+//	main.java.srcDir generatedJooq
+//}
+
+
+// gradle clean 시에 Jooq 디렉토리 삭제 (본래의 Jooq 의도에는 맞지 않는 사용법)
+tasks.named('clean') {
+	dependsOn 'cleanGenerateJooq'
+}
