@@ -35,6 +35,7 @@ public class JooqConfig {
         configuration.set(connectionProvider);
         configuration.set(executeListenerProviders.orderedStream().toArray(ExecuteListenerProvider[]::new));
         configuration.setSettings(new Settings().withRenderFormatted(customProperties.isFormatSql()));
+        //configuration.setSettings(new Settings().withRenderFormatted(true));
         configurationCustomizers.orderedStream().forEach((customizer) -> customizer.customize(configuration));
 
         return configuration;
