@@ -95,7 +95,7 @@ jooq {
 					driver = 'com.mysql.cj.jdbc.Driver'
 					url = 'jdbc:mysql://localhost:3306/inline'
 					user = 'root'
-					password = 'mysql16384'
+					password = ''
 				}
 				generator {
 					name = 'org.jooq.codegen.JavaGenerator'
